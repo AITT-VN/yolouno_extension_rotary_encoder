@@ -1,0 +1,1 @@
+# yolouno_extension_rotary_encoder
