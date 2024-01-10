@@ -1,8 +1,8 @@
 {
     "name": "ROTARY ENCODER",
-    "description": "Mục mở rộng hỗ trợ sử dụng rotary encoder",
+    "description": "Thư viện dùng module cảm biến xoay rotary encoder",
     "libs": [
-        "rotary.py"
+        "rotary_encoder.py"
     ],
     "blocks": [
         "definition.js"

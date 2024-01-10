@@ -57,7 +57,7 @@ def _wrap(value, incr, lower_bound, upper_bound):
 def _bound(value, incr, lower_bound, upper_bound):
     return min(upper_bound, max(lower_bound, value + incr))
 
-class Rotary(object): 
+class RotaryEncoder(object): 
  
     RANGE_UNBOUNDED = const(1)  
     RANGE_WRAP = const(2)
@@ -121,9 +121,9 @@ class Rotary(object):
         else:
             self._value = self._value + incr
 
-class RotaryIRQ(Rotary): 
+class RotaryEncoderIRQ(RotaryEncoder): 
     
-    def __init__(self, clk, dt, min_val=0, max_val=10, reverse=False, range_mode=Rotary.RANGE_UNBOUNDED, pull_up=False):
+    def __init__(self, clk, dt, min_val=0, max_val=10, reverse=False, range_mode=RotaryEncoder.RANGE_UNBOUNDED, pull_up=False):
         
         if platform == 'esp8266':
             if clk in _esp8266_deny_pins:

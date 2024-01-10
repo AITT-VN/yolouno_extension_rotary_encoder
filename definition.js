@@ -1,63 +1,5 @@
-const RotaryColorBlock = "#A39400";
 
-var digitalPins = [
-  [
-    "D3",
-    "D3"
-  ],
-  [
-    "D4",
-    "D4"
-  ],
-  [
-    "D5",
-    "D5"
-  ],
-  [
-    "D6",
-    "D6"
-  ],
-  [
-    "D7",
-    "D7"
-  ],
-  [
-    "D8",
-    "D8"
-  ],
-  [
-    "D9",
-    "D9"
-  ],
-  [
-    "D10",
-    "D10"
-  ],
-  [
-    "D11",
-    "D11"
-  ],
-  [
-    "D12",
-    "D12"
-  ],
-  [
-    "D13",
-    "D13"
-  ],
-  [
-    "D0",
-    "D0"
-  ],
-  [
-    "D1",
-    "D1"
-  ],
-  [
-    "D2",
-    "D2"
-  ]
-];
+const RotaryColorBlock = "#A39400";
 
 Blockly.Blocks["yolouno_rotary_encoder_init"] = {
   /**
@@ -67,7 +9,7 @@ Blockly.Blocks["yolouno_rotary_encoder_init"] = {
   init: function () {
     this.jsonInit({
       type: "yolouno_rotary_encoder_init",
-      message0: "khởi tạo module led 7 đoạn chân CLK %1 chân DATA %2",
+      message0: "khởi tạo rotary encoder chân A %1 B %2",
       args0: [
         {
           type: "field_dropdown",
@@ -86,10 +28,18 @@ Blockly.Blocks["yolouno_rotary_encoder_init"] = {
       tooltip: "",
       helpUrl: "",
     });
-  },
-  getDeveloperVars: function () {
-    return ["rotary_encoder"];
-  },
+  }
+};
+
+Blockly.Python['yolouno_rotary_encoder_init'] = function (block) {
+  var dropdown_clk = block.getFieldValue('CLK');
+  var dropdown_dt = block.getFieldValue('DT');
+  // TODO: Assemble Python into code variable.
+  Blockly.Python.definitions_['import_rotary_encoder'] = 'from rotary_encoder import *';
+  Blockly.Python.definitions_['init_rotary_encoder'] = 'rotary_encoder = RotaryEncoderIRQ(clk=' + dropdown_clk + '_PIN, dt=' + dropdown_dt + '_PIN)';
+  Blockly.Python.definitions_['deinit_rotary_encoder'] = 'rotary_encoder.close()';
+  var code = '';
+  return code;
 };
 
 Blockly.Blocks['yolouno_rotary_encoder_get_value'] = {
@@ -102,18 +52,22 @@ Blockly.Blocks['yolouno_rotary_encoder_get_value'] = {
       output: "Number",
       helpUrl: "",
     });
-  },
-  getDeveloperVars: function () {
-    return ["rotary_encoder"];
-  },
+  }
 };
+
+Blockly.Python['yolouno_rotary_encoder_get_value'] = function (block) {
+  // TODO: Assemble Python into code variable.
+  var code = "rotary_encoder.value()";
+  return [code, Blockly.Python.ORDER_NONE];
+};
+
 
 Blockly.Blocks['yolouno_rotary_encoder_set_range_value'] = {
   init: function () {
     this.jsonInit({
       colour: RotaryColorBlock,
       tooltip: "",
-      message0: "đặt khoảng giá trị cho rotary encoder min %1 max %2 %3",
+      message0: "đặt giá trị min %1 max %2 %3",
       args0: [
         {
           "type": "input_value",
@@ -131,10 +85,15 @@ Blockly.Blocks['yolouno_rotary_encoder_set_range_value'] = {
       nextStatement: null,
       helpUrl: "",
     });
-  },
-  getDeveloperVars: function () {
-    return ["rotary_encoder"];
-  },
+  }
+};
+
+Blockly.Python['yolouno_rotary_encoder_set_range_value'] = function (block) {
+  var value_min = Blockly.Python.valueToCode(block, 'min', Blockly.Python.ORDER_ATOMIC);
+  var value_max = Blockly.Python.valueToCode(block, 'max', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = 'rotary_encoder.set(min_val=' + value_min + ', max_val=' + value_max + ')\n';
+  return code;
 };
 
 Blockly.Blocks['yolouno_rotary_encoder_mode'] = {
@@ -142,15 +101,23 @@ Blockly.Blocks['yolouno_rotary_encoder_mode'] = {
     this.jsonInit({
       colour: RotaryColorBlock,
       tooltip: "",
-      message0: "đặt chế độ xoay cho rotary encoder %1",
+      message0: "đặt chế độ %1 %2",
       args0: [
+        {
+          type: "field_dropdown",
+          name: "dir",
+          options: [
+            ["xoay thuận", "False"],
+            ["xoay ngược", "True"],
+          ],
+        },
         {
           type: "field_dropdown",
           name: "mode",
           options: [
-            ["không giới hạn", " RotaryIRQ.RANGE_UNBOUNDED"],
-            ["reset khi quay tới max", "RotaryIRQ.RANGE_WRAP"],
-            ["dừng tăng khi quay tới max", "RotaryIRQ.RANGE_BOUNDED"]
+            ["không giới hạn", "RotaryEncoderIRQ.RANGE_UNBOUNDED"],
+            ["reset khi tới max", "RotaryEncoderIRQ.RANGE_WRAP"],
+            ["dừng tăng khi tới max", "RotaryEncoderIRQ.RANGE_BOUNDED"]
           ],
         }
       ],
@@ -158,18 +125,24 @@ Blockly.Blocks['yolouno_rotary_encoder_mode'] = {
       nextStatement: null,
       helpUrl: "",
     });
-  },
-  getDeveloperVars: function () {
-    return ["rotary_encoder"];
-  },
+  }
 };
+
+Blockly.Python['yolouno_rotary_encoder_mode'] = function (block) {
+  var dir = block.getFieldValue('dir');
+  var mode = block.getFieldValue('mode');
+  // TODO: Assemble Python into code variable.
+  var code = 'rotary_encoder.set(reverse=' + dir + ', range_mode=' + mode + ')\n';
+  return code;
+};
+
 
 Blockly.Blocks['yolouno_rotary_encoder_set_current_value'] = {
   init: function () {
     this.jsonInit({
       colour: RotaryColorBlock,
       tooltip: "",
-      message0: "đặt giá trị hiện tại cho rotary encoder %1 %2",
+      message0: "đặt lại giá trị hiện tại rotary encoder %1 %2",
       args0: [
         {
           "type": "input_value",
@@ -183,11 +156,16 @@ Blockly.Blocks['yolouno_rotary_encoder_set_current_value'] = {
       nextStatement: null,
       helpUrl: "",
     });
-  },
-  getDeveloperVars: function () {
-    return ["rotary_encoder"];
-  },
+  }
 };
+
+Blockly.Python['yolouno_rotary_encoder_set_current_value'] = function (block) {
+  var value_value = Blockly.Python.valueToCode(block, 'value', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = 'rotary_encoder.set(value=' + value_value + ')\n';
+  return code;
+};
+
 
 Blockly.Blocks['yolouno_rotary_encoder_direction'] = {
   init: function () {
@@ -200,61 +178,21 @@ Blockly.Blocks['yolouno_rotary_encoder_direction'] = {
           type: "field_dropdown",
           name: "LR",
           options: [
-            ["xoay qua trái", " < 0"],
-            ["xoay qua phải", " > 0"]
+            ["xoay trái", " < 0"],
+            ["xoay phải", " > 0"],
+            ["xoay trái hoặc phải", " != 0"]
           ],
         }
       ],
       output: "Boolean",
       helpUrl: "",
     });
-  },
-  getDeveloperVars: function () {
-    return ["rotary_encoder"];
-  },
+  }
 };
 
-
-Blockly.Python['yolouno_rotary_encoder_init'] = function (block) {
-  var dropdown_clk = block.getFieldValue('CLK');
-  var dropdown_dt = block.getFieldValue('DT');
-  // TODO: Assemble Python into code variable.
-  Blockly.Python.definitions_['import_rotary'] = 'from rotary import *';
-  Blockly.Python.definitions_['init_tm1637'] = 'rotary_encoder = RotaryIRQ(clk=' + dropdown_clk + '_PIN, dt=' + dropdown_dt + '_PIN, min_val=0, max_val=10, reverse=True, range_mode=RotaryIRQ.RANGE_UNBOUNDED, pull_up=False)';
-  var code = '';
-  return code;
-};
-
-Blockly.Python['yolouno_rotary_encoder_get_value'] = function (block) {
-  // TODO: Assemble Python into code variable.
-  var code = "rotary_encoder.value()";
-  return [code, Blockly.Python.ORDER_NONE];
-};
-
-Blockly.Python['yolouno_rotary_encoder_set_range_value'] = function (block) {
-  var value_min = Blockly.Python.valueToCode(block, 'min', Blockly.Python.ORDER_ATOMIC);
-  var value_max = Blockly.Python.valueToCode(block, 'max', Blockly.Python.ORDER_ATOMIC);
-  // TODO: Assemble Python into code variable.
-  var code = 'rotary_encoder.set(min_val=' + value_min + ', max_val=' + value_max + ', range_mode=RotaryIRQ.RANGE_WRAP)\n';
-  return code;
-};
-
-Blockly.Python['yolouno_rotary_encoder_mode'] = function (block) {
-  var dropdown_mode = block.getFieldValue('mode');
-  // TODO: Assemble Python into code variable.
-  var code = 'rotary_encoder.set(range_mode=' + dropdown_mode + ')\n';
-  return code;
-};
-
-Blockly.Python['yolouno_rotary_encoder_set_current_value'] = function (block) {
-  var value_value = Blockly.Python.valueToCode(block, 'value', Blockly.Python.ORDER_ATOMIC);
-  // TODO: Assemble Python into code variable.
-  var code = 'rotary_encoder.set(value=' + value_value + ')\n';
-  return code;
-};
 
 Blockly.Python['yolouno_rotary_encoder_direction'] = function (block) {
-  Blockly.Python.definitions_['import_rotary'] = 'from rotary import rotary_encoder';
+  Blockly.Python.definitions_['import_rotary_encoder'] = 'from rotary_encoder import *';
   var dropdown_lr = block.getFieldValue('LR');
   // TODO: Assemble Python into code variable.
   var code = 'rotary_encoder.get_steps()' + dropdown_lr;
